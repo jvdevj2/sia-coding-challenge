@@ -7,7 +7,11 @@ package es.sia.css.test.domain.roulette;
 
 import es.sia.css.test.domain.bet.ResolvedBet;
 import es.sia.css.test.domain.bet.RouletteBet;
+import es.sia.css.test.domain.bet.RouletteNumberBet;
+import es.sia.css.test.domain.user.User;
+import es.sia.css.test.domain.valueobject.Cash;
 import es.sia.css.test.domain.valueobject.RoulettePosition;
+
 import java.util.Optional;
 
 public final class Roulette {
@@ -29,6 +33,12 @@ public final class Roulette {
 
     public Optional<ResolvedBet> play() {
         RoulettePosition winningPosition = getRandomPosition();
+
+        // Si bet es null, se establece un bet por defecto
+        if (bet == null) {
+            placeBet(RouletteNumberBet.of(Cash.of(1L), User.of(Cash.of(1L)), RoulettePosition.of(1)));
+        }
+
         return Optional.of(bet.resolve(winningPosition));
     }
 

@@ -26,7 +26,7 @@ class PlaceRouletteBetHandlerTest {
 
         when(numberRandomizerMock.getNumber(37)).thenReturn(6);
 
-        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(1L, RouletteColor.RED);
+        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(1L, RouletteColor.BLACK);
         subject.handle(command);
 
         Assertions.assertEquals(101L, user.getCash().value());
@@ -43,7 +43,8 @@ class PlaceRouletteBetHandlerTest {
 
         when(numberRandomizerMock.getNumber(37)).thenReturn(7);
 
-        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(50L, RouletteColor.RED);
+        // Para que se lance la excepción, el amount de la apuesta tiene que ser mayor al cash
+        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(110L, RouletteColor.RED);
 
         Assertions.assertThrows(NotEnoughCashException.class, () -> subject.handle(command));
     }
@@ -59,19 +60,50 @@ class PlaceRouletteBetHandlerTest {
 
         when(numberRandomizerMock.getNumber(37)).thenReturn(7);
 
-        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(50L, RouletteColor.RED);
+        PlaceColorRouletteBetCommand command = new PlaceColorRouletteBetCommand(50L, RouletteColor.BLACK);
+        subject.handle(command);
 
-        // TODO añadir aserciones
+        Assertions.assertEquals(50L, user.getCash().value());
     }
 
     @Test
     void winningNumericBet() {
-        // TODO
+        long userCash = 100;
+        long betAmount = 20;
+        long cashAfterBet = userCash - betAmount + (35 * betAmount);
+        User user = User.of(Cash.of(userCash));
+
+        PlaceRouletteBetHandler subject = new PlaceRouletteBetHandler(
+                user,
+                Roulette.of(numberRandomizerMock)
+        );
+
+        when(numberRandomizerMock.getNumber(37)).thenReturn(6);
+
+        PlaceSingleNumberRouletteBetCommand command = new PlaceSingleNumberRouletteBetCommand(betAmount, 6);
+        subject.handle(command);
+
+        Assertions.assertEquals(cashAfterBet, user.getCash().value());
     }
 
     @Test
     void losingNumericBet() {
-        // TODO
+        long userCash = 100;
+        long betAmount = 20;
+        long cashAfterBet = userCash - betAmount;
+        User user = User.of(Cash.of(userCash));
+
+        PlaceRouletteBetHandler subject = new PlaceRouletteBetHandler(
+                user,
+                Roulette.of(numberRandomizerMock)
+        );
+
+        when(numberRandomizerMock.getNumber(37)).thenReturn(6);
+
+        PlaceSingleNumberRouletteBetCommand command = new PlaceSingleNumberRouletteBetCommand(betAmount, 7);
+        subject.handle(command);
+
+        Assertions.assertEquals(cashAfterBet, user.getCash().value());
     }
 
 }

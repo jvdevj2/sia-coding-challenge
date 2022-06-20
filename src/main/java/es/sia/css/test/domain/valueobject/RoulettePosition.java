@@ -23,8 +23,8 @@ public class RoulettePosition {
         if(position == 0)
             return RouletteColor.GREEN;
         if(position % 2 == 0)
-            return RouletteColor.RED;
-        return RouletteColor.BLACK;
+            return RouletteColor.BLACK;
+        return RouletteColor.RED;
     }
 
     public static final class NotValidPositionException extends RuntimeException{

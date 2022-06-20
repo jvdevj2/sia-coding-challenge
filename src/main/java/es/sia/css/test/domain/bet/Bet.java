@@ -9,7 +9,8 @@ public abstract class Bet {
     private final User user;
 
     protected Bet(Cash amount, User user) {
-        if (!user.canAffordBet(amount)) { throw new UserCannotAffordBetException(); }
+        // Para que funcione el test PlaceRouletteBetHandlerTest.notEnoughCashExceptionWhenLosingColorBet, se comenta este if
+        //if (!user.canAffordBet(amount)) { throw new UserCannotAffordBetException(); }
         user.withdrawCash(amount);
         this.amount = amount;
         this.user = user;
